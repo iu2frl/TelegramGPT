@@ -17,3 +17,7 @@ This project uses the gpt4free modules to interact with third party AI assistant
 ## Whitelist
 
 This tools uses some third parties API(s) that may report an overload if the bot is processing too much input, to avoid this, you can specify a whitelist by creating a `BOT_WHITELIST` environment variable which contains a list of comma-separated CHAT ID(s) that can access your bot
+
+## Admin configuration
+
+An administrator account can be set in the environment variable `BOT_ADMIN` to receive alerts if needed

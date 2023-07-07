@@ -23,8 +23,8 @@ if (":" not in BOT_TOKEN):
 # Generate bot object
 bot = telebot.TeleBot(BOT_TOKEN)
 
-BOT_WHITELIST: list[int] = []
 # Read allowed chat from environment variables
+BOT_WHITELIST: list[int] = []
 if (not os.environ.get('BOT_WHITELIST')):
     logging.warning("No whitelist have been specified, this means that anybody can use this bot and you may get banned!")
 else:
@@ -34,6 +34,15 @@ else:
     except:
         logging.critical("Invalid whitelist format! Syntax: 12345,09876,...")
         raise Exception("Invalid BOT_WHITELIST")
+
+# Read bot admin to forward some details
+BOT_ADMIN = os.environ.get('BOT_ADMIN')
+if (not BOT_ADMIN):
+    logging.warning("No admin ID has been specified")
+else:
+    if (BOT_ADMIN not in BOT_WHITELIST):
+        logging.warning("Adding admin to whitelist")
+        BOT_WHITELIST.append(BOT_ADMIN)
 
 # Check if message comes from a valid source
 def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
@@ -45,7 +54,11 @@ def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
         logging.debug("Chat is in whitelist, accepting")
         return True
     else:
-        logging.warning("Ignoring message from user: [" + inputMessage.from_user.username + "] id: [" + str(inputMessage.chat.id) + "]")
+        # Return an error to the admin
+        denyText = "Ignoring message from user: [" + inputMessage.from_user.username + "] id: [" + str(inputMessage.chat.id) + "]"
+        if (BOT_ADMIN):
+            bot.send_message(BOT_ADMIN, denyText)
+        logging.warning(denyText)
         return False
 
 # Handle non-text messages
@@ -65,6 +78,8 @@ def HandleAiMessage(inputMessage: telebot.types.Message):
         # Create async thread to handle replies
         thread = threading.Thread(target=ReplyAi, args=(inputMessage, ))
         thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
 
 # Create async reply
 def ReplyAi(inputMessage: telebot.types.Message):
@@ -99,14 +114,12 @@ def ReplyAi(inputMessage: telebot.types.Message):
 # Welcome new users
 @bot.message_handler(content_types=["text"], commands=['start', 'hello'])
 def send_welcome(inputMessage: telebot.types.Message):
-    if CheckWhitelist(inputMessage):
-        bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nHow can i assist you today?")
+    bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nHow can i assist you today?")
 
 # Give project informations
 @bot.message_handler(content_types=["text"], commands=['info'])
 def send_welcome(inputMessage: telebot.types.Message):
-    if CheckWhitelist(inputMessage):
-        bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nThis project is hosted on a GitHub repository, do you want to partecipate? Here's the link: https://github.com/iu2frl/YotaBot")
+    bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nThis project is hosted on a GitHub repository, do you want to partecipate? Here's the link: https://github.com/iu2frl/YotaBot")
 
 # @bot.message_handler(func=lambda msg: True)
 # def echo_all(message: telebot.types.Message):
