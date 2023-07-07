@@ -72,7 +72,7 @@ def default_command(inputMessage: telebot.types.Message):
         bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
 
 # Handle BING command
-@bot.message_handler(content_types=["text"], commands=['bing'])
+@bot.message_handler(content_types=["text"], commands=['bing', 'Bing'])
 def HandleBingMessage(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
         # Check that the massage contains some text
@@ -112,7 +112,7 @@ def HandleAiMessage(inputMessage: telebot.types.Message):
     #     thread.start()
     # else:
     #     bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
-    HandleGetgptMessage(inputMessage)
+    HandleDeepaiMessage(inputMessage)
 
 # Handle Aichat command
 @bot.message_handler(content_types=["text"], commands=['aichat'])
@@ -171,7 +171,7 @@ def HandleYouMessage(inputMessage: telebot.types.Message):
         bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
 
 # Handle Bard command
-@bot.message_handler(content_types=["text"], commands=['bard'])
+@bot.message_handler(content_types=["text"], commands=['bard', 'Bard'])
 def HandleBardMessage(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
         # Check that the massage contains some text
@@ -254,6 +254,19 @@ def HandleVercelMessage(inputMessage: telebot.types.Message):
     else:
         bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
 
+# Handle Lockchat command
+@bot.message_handler(content_types=["text"], commands=['deepai'])
+def HandleDeepaiMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", g4f.Provider.DeepAi, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
 
 # Check for services status
 @bot.message_handler(content_types=["text"], commands=['uptest'])
@@ -264,7 +277,7 @@ def HandleYouMessage(inputMessage: telebot.types.Message):
             thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", singleProvider, ))
             thread.start()
     else:
-        bot.reply_to(inputMessage, "Sorry but you're allowed to use this command!")
+        bot.reply_to(inputMessage, "Sorry but you're not allowed to use this command!")
 
 # Create async reply
 def ReplyAi(inputMessage: telebot.types.Message, botType, botProvider):
@@ -289,16 +302,28 @@ def ReplyAi(inputMessage: telebot.types.Message, botType, botProvider):
         gptResponse: str = g4f.ChatCompletion.create(model=botType, provider=botProvider, messages=[{"role": "user", "content": inputQuery}])
     except Exception as retExc:
         # Plot errors if needed
+        logging.error(retExc)
         try:
-            response = "Model: " + str(botProvider).replace("<module ", "").split("from")[0] + "\n\n" + retExc
+            response = "Model: " + str(botProvider).replace("<module ", "").split("from")[0] + "\n\n" + str(retExc)
         except:
-            response = retExc
-        bot.edit_message_text(response, inputMessage.chat.id, newReply.id)
-        return
+            response = str(retExc)
+        # Check if we have some known errors
+        if (str(retExc).startswith("CaptchaChallenge:")):
+            gptResponse = "This service is currently overloaded, please try again later"
+        elif (str(retExc).startswith("\'adaptiveCards\'")):
+            gptResponse = "Image generation is not yet supported"
+        elif (str(retExc).startswith("\'message\'")):
+            gptResponse = "This service is currently overloaded, please try again later"
+        else:
+            # Return the error message
+            bot.edit_message_text(response, inputMessage.chat.id, newReply.id)
+            return
     # Cleanup response from GPT if needed
     gptResponse = re.sub(r"(\[\^\d\^\])", "", gptResponse)
+    # Handle some exceptions
     if (not gptResponse):
         gptResponse = "An empty response was returned..."
+    # Add Model information
     gptResponse = "Model: " + str(botProvider).replace("<module ", "").split("from")[0] + "\n\n" + gptResponse
     # Try to process the input text as markdown
     try:
