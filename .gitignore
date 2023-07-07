@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 g4f/
+telegramgpt/
+environments.sh

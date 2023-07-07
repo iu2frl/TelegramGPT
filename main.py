@@ -42,7 +42,11 @@ if (not BOT_ADMIN):
 else:
     if (BOT_ADMIN not in BOT_WHITELIST):
         logging.warning("Adding admin to whitelist")
-        BOT_WHITELIST.append(BOT_ADMIN)
+        BOT_WHITELIST.append(int(BOT_ADMIN))
+
+# Debug info
+logging.debug("Whitelist: " + str(BOT_WHITELIST))
+logging.debug("Admin: " + str(BOT_ADMIN))
 
 # Check if message comes from a valid source
 def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
@@ -67,22 +71,188 @@ def default_command(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
         bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
 
-# Handle AI command
-@bot.message_handler(content_types=["text"], commands=['ai', 'bing'])
-def HandleAiMessage(inputMessage: telebot.types.Message):
+# Handle BING command
+@bot.message_handler(content_types=["text"], commands=['bing'])
+def HandleBingMessage(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
         # Check that the massage contains some text
         if (len(inputMessage.text) <= 5):
-            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/ai [text to interact with]`")
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
             return
         # Create async thread to handle replies
-        thread = threading.Thread(target=ReplyAi, args=(inputMessage, ))
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, g4f.Model.gpt_4, g4f.Provider.Bing, ))
         thread.start()
     else:
         bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
 
+# Handle Forefront command
+@bot.message_handler(content_types=["text"], commands=['forefront'])
+def HandleForefrontMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, g4f.Model.gpt_4, g4f.Provider.Forefront))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle AI command
+@bot.message_handler(content_types=["text"], commands=['ai'])
+def HandleAiMessage(inputMessage: telebot.types.Message):
+    # if CheckWhitelist(inputMessage):
+    #     # Check that the massage contains some text
+    #     if (len(inputMessage.text) <= 5):
+    #         bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+    #         return
+    #     # Create async thread to handle replies
+    #     thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", None, ))
+    #     thread.start()
+    # else:
+    #     bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+    HandleAichatMessage(inputMessage)
+
+# Handle Aichat command
+@bot.message_handler(content_types=["text"], commands=['aichat'])
+def HandleAichatMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", g4f.Provider.Aichat, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle Ails command
+@bot.message_handler(content_types=["text"], commands=['ails'])
+def HandleAilsMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", g4f.Provider.Ails, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle You command
+@bot.message_handler(content_types=["text"], commands=['you'])
+def HandleYouMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", g4f.Provider.You, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle Yqcloud command
+@bot.message_handler(content_types=["text"], commands=['yqcloud'])
+def HandleYouMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", g4f.Provider.Yqcloud, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle Bard command
+@bot.message_handler(content_types=["text"], commands=['bard'])
+def HandleBardMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "Palm2", g4f.Provider.Bard, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle GetGPT command
+@bot.message_handler(content_types=["text"], commands=['getgpt'])
+def HandleGetgptMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", g4f.Provider.GetGpt, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle H2O command
+@bot.message_handler(content_types=["text"], commands=['h2o'])
+def HandleH20Message(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "falcon-40b", g4f.Provider.H2o, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle Liaobots command
+@bot.message_handler(content_types=["text"], commands=['liaobots'])
+def HandleLiaobotsMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-4", g4f.Provider.Liaobots, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Handle Lockchat command
+@bot.message_handler(content_types=["text"], commands=['lockchat'])
+def HandleLockchatMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-4", g4f.Provider.Lockchat, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+# Check for services status
+@bot.message_handler(content_types=["text"], commands=['uptest'])
+def HandleYouMessage(inputMessage: telebot.types.Message):
+    if inputMessage.from_user.id == int(BOT_ADMIN):
+        providersList: list = [g4f.Provider.Aichat, g4f.Provider.Ails, g4f.Provider.Bard, g4f.Provider.Bing, g4f.Provider.ChatgptLogin, g4f.Provider.DeepAi, g4f.Provider.Forefront, g4f.Provider.GetGpt, g4f.Provider.H2o, g4f.Provider.Liaobots, g4f.Provider.Lockchat] 
+        for singleProvider in providersList:
+            thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", singleProvider, ))
+            thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're allowed to use this command!")
+
 # Create async reply
-def ReplyAi(inputMessage: telebot.types.Message):
+def ReplyAi(inputMessage: telebot.types.Message, botType, botProvider):
     # Create the ASYNC.IO loop (if needed)
     try:
         newLoop = asyncio.get_event_loop()
@@ -95,16 +265,26 @@ def ReplyAi(inputMessage: telebot.types.Message):
     # Generate temporary reply
     newReply = bot.reply_to(inputMessage, "Please wait...")
     # Process the input query
-    inputQuery = inputMessage.text.replace("/ai", "").replace("/bing", "").strip()
+    inputQuery = re.sub(r"\/(\w+)", "", inputMessage.text).strip()
+    if (not inputQuery):
+        inputQuery = "Hello, who are you?"
+    logging.debug(inputQuery)
     # Create the GPT4FREE instance
     try:
-        gptResponse: str = g4f.ChatCompletion.create(model=g4f.Model.gpt_4, messages=[{"role": "user", "content": inputQuery}])
+        gptResponse: str = g4f.ChatCompletion.create(model=botType, provider=botProvider, messages=[{"role": "user", "content": inputQuery}])
     except Exception as retExc:
         # Plot errors if needed
-        bot.edit_message_text(retExc, inputMessage.chat.id, newReply.id)
+        try:
+            response = "Model: " + str(botProvider).replace("<module ", "").split("from")[0] + "\n\n" + retExc
+        except:
+            response = retExc
+        bot.edit_message_text(response, inputMessage.chat.id, newReply.id)
         return
     # Cleanup response from GPT if needed
     gptResponse = re.sub(r"(\[\^\d\^\])", "", gptResponse)
+    if (not gptResponse):
+        gptResponse = "An empty response was returned..."
+    gptResponse = "Model: " + str(botProvider).replace("<module ", "").split("from")[0] + "\n\n" + gptResponse
     # Try to process the input text as markdown
     try:
         bot.edit_message_text(gptResponse, inputMessage.chat.id, newReply.id, parse_mode="Markdown")
