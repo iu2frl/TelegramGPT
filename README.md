@@ -21,3 +21,7 @@ This tools uses some third parties API(s) that may report an overload if the bot
 ## Admin configuration
 
 An administrator account can be set in the environment variable `BOT_ADMIN` to receive alerts if needed
+
+# Docker image
+
+Of course i did a Docker image, here's the link: [https://hub.docker.com/repository/docker/iu2frl/telegram-gpt/general](https://hub.docker.com/repository/docker/iu2frl/telegram-gpt/general)
