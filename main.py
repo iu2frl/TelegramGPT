@@ -112,7 +112,7 @@ def HandleAiMessage(inputMessage: telebot.types.Message):
     #     thread.start()
     # else:
     #     bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
-    HandleAichatMessage(inputMessage)
+    HandleGetgptMessage(inputMessage)
 
 # Handle Aichat command
 @bot.message_handler(content_types=["text"], commands=['aichat'])
