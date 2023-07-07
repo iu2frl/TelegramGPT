@@ -6,6 +6,9 @@ import logging
 import threading
 import re
 
+# Specify logging level
+logging.basicConfig(level=logging.DEBUG)
+
 # Read API Token from environment variables
 BOT_TOKEN: str = os.environ.get('BOT_TOKEN')
 if (not BOT_TOKEN):
@@ -41,6 +44,7 @@ def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
         return True
     else:
         logging.debug("Ignoring message from user: [" + inputMessage.from_user.username + "]")
+        return False
 
 # Handle non-text messages
 @bot.message_handler(func=lambda message: True, content_types=['audio', 'photo', 'voice', 'video', 'document', 'location', 'contact', 'sticker'])
@@ -74,7 +78,7 @@ def ReplyAi(inputMessage: telebot.types.Message):
     # Generate temporary reply
     newReply = bot.reply_to(inputMessage, "Please wait...")
     # Process the input query
-    inputQuery = inputMessage.text.capitalize().replace("/ai", "").strip()
+    inputQuery = inputMessage.text.replace("/ai", "").strip()
     # Create the GPT4FREE instance
     try:
         gptResponse: str = g4f.ChatCompletion.create(model=g4f.Model.gpt_4, messages=[{"role": "user", "content": inputQuery}])
@@ -102,9 +106,9 @@ def send_welcome(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
         bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nThis project is hosted on a GitHub repository, do you want to partecipate? Here's the link: https://github.com/iu2frl/YotaBot")
 
-@bot.message_handler(func=lambda msg: True)
-def echo_all(message: telebot.types.Message):
-    bot.reply_to(message, message.text)
+# @bot.message_handler(func=lambda msg: True)
+# def echo_all(message: telebot.types.Message):
+#     bot.reply_to(message, message.text)
 
 if __name__ == "__main__":
     logging.info("Starting bot")
