@@ -6,9 +6,6 @@ import logging
 import threading
 import re
 
-# Specify logging leveò
-logging.basicConfig(level=logging.DEBUG)
-
 # Read API Token from environment variables
 BOT_TOKEN: str = os.environ.get('BOT_TOKEN')
 if (not BOT_TOKEN):
@@ -52,7 +49,7 @@ def default_command(inputMessage: telebot.types.Message):
         bot.send_message(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
 
 # Handle AI command
-@bot.message_handler(content_types=["text"], commands=['ai', 'bing'])
+@bot.message_handler(commands=['ai'])
 def HandleAiMessage(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
         # Check that the massage contains some text
@@ -105,9 +102,9 @@ def send_welcome(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
         bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nThis project is hosted on a GitHub repository, do you want to partecipate? Here's the link: https://github.com/iu2frl/YotaBot")
 
-# @bot.message_handler(func=lambda msg: True)
-# def echo_all(message: telebot.types.Message):
-#     bot.reply_to(message, message.text)
+@bot.message_handler(func=lambda msg: True)
+def echo_all(message: telebot.types.Message):
+    bot.reply_to(message, message.text)
 
 if __name__ == "__main__":
     logging.info("Starting bot")
