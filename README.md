@@ -24,4 +24,4 @@ An administrator account can be set in the environment variable `BOT_ADMIN` to r
 
 # Docker image
 
-Of course i did a Docker image, here's the link: [https://hub.docker.com/repository/docker/iu2frl/telegram-gpt/general](https://hub.docker.com/repository/docker/iu2frl/telegram-gpt/general)
+Of course i did a Docker image, here's the link: [u2frl/telegram-gpt](https://hub.docker.com/repository/docker/iu2frl/telegram-gpt/general)
