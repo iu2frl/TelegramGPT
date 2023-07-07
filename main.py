@@ -65,7 +65,7 @@ def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
 @bot.message_handler(func=lambda message: True, content_types=['audio', 'photo', 'voice', 'video', 'document', 'location', 'contact', 'sticker'])
 def default_command(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
-        bot.send_message(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
+        bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
 
 # Handle AI command
 @bot.message_handler(content_types=["text"], commands=['ai', 'bing'])
