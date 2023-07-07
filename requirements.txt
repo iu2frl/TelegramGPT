@@ -1,4 +1,3 @@
 telebot
 asyncio
-logging
 threading
