@@ -240,11 +240,26 @@ def HandleLockchatMessage(inputMessage: telebot.types.Message):
     else:
         bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
 
+# Handle Lockchat command
+@bot.message_handler(content_types=["text"], commands=['vercel'])
+def HandleVercelMessage(inputMessage: telebot.types.Message):
+    if CheckWhitelist(inputMessage):
+        # Check that the massage contains some text
+        if (len(inputMessage.text) <= 5):
+            bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/[command] [text to interact with]`")
+            return
+        # Create async thread to handle replies
+        thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", g4f.Provider.Vercel, ))
+        thread.start()
+    else:
+        bot.reply_to(inputMessage, "Sorry but you're not in the whitelist!")
+
+
 # Check for services status
 @bot.message_handler(content_types=["text"], commands=['uptest'])
 def HandleYouMessage(inputMessage: telebot.types.Message):
     if inputMessage.from_user.id == int(BOT_ADMIN):
-        providersList: list = [g4f.Provider.Aichat, g4f.Provider.Ails, g4f.Provider.Bard, g4f.Provider.Bing, g4f.Provider.ChatgptLogin, g4f.Provider.DeepAi, g4f.Provider.Forefront, g4f.Provider.GetGpt, g4f.Provider.H2o, g4f.Provider.Liaobots, g4f.Provider.Lockchat] 
+        providersList: list = [g4f.Provider.Aichat, g4f.Provider.Vercel, g4f.Provider.Theb, g4f.Provider.Ails, g4f.Provider.Bard, g4f.Provider.Bing, g4f.Provider.ChatgptLogin, g4f.Provider.DeepAi, g4f.Provider.Forefront, g4f.Provider.GetGpt, g4f.Provider.H2o, g4f.Provider.Liaobots, g4f.Provider.Lockchat] 
         for singleProvider in providersList:
             thread = threading.Thread(target=ReplyAi, args=(inputMessage, "gpt-3.5-turbo", singleProvider, ))
             thread.start()
