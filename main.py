@@ -55,7 +55,7 @@ def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
         return True
     else:
         # Return an error to the admin
-        denyText = "Ignoring message from user: [" + inputMessage.from_user.username + "] id: [" + str(inputMessage.chat.id) + "]"
+        denyText = "Ignoring message from user: [@" + inputMessage.from_user.username + "] id: [" + str(inputMessage.chat.id) + "]"
         if (BOT_ADMIN):
             bot.send_message(BOT_ADMIN, denyText)
         logging.warning(denyText)
