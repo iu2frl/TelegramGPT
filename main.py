@@ -313,7 +313,7 @@ def ReplyAi(inputMessage: telebot.types.Message, botType, botProvider):
         elif (str(retExc).startswith("\'adaptiveCards\'")):
             gptResponse = "Image generation is not yet supported"
         elif (str(retExc).startswith("\'message\'")):
-            gptResponse = "This service is currently overloaded, please try again later"
+            gptResponse = "This service is currently not available, please try again later"
         else:
             # Return the error message
             bot.edit_message_text(response, inputMessage.chat.id, newReply.id)
