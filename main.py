@@ -11,8 +11,12 @@ BOT_TOKEN = os.environ.get('BOT_TOKEN')
 bot = telebot.TeleBot(BOT_TOKEN)
 
 # Handle AI command
-@bot.message_handler(commands=['ai'])
+@bot.message_handler(commands=['ai', 'bing'])
 def HandleAiMessage(inputMessage: telebot.types.Message):
+    # Check that the massage contains some text
+    if (len(inputMessage) <= 5):
+        bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + " please give me some data to process, syntax is: `/ai [text to interact with]`")
+        return
     # Create async thread to handle replies
     thread = threading.Thread(target=ReplyAi, args=(inputMessage, ))
     thread.start()
