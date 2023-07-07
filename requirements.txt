@@ -1,0 +1,7 @@
+os
+telebot
+asyncio
+g4f
+logging
+threading
+re
