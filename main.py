@@ -55,7 +55,7 @@ def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
         return True
     else:
         # Return an error to the admin
-        denyText = "Ignoring message from user: [" + inputMessage.from_user.username + "] id: [" + str(inputMessage.chat.id) + "]"
+        denyText = "Ignoring message from user: [@" + inputMessage.from_user.username + "] id: [" + str(inputMessage.chat.id) + "]"
         if (BOT_ADMIN):
             bot.send_message(BOT_ADMIN, denyText)
         logging.warning(denyText)
@@ -65,7 +65,7 @@ def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
 @bot.message_handler(func=lambda message: True, content_types=['audio', 'photo', 'voice', 'video', 'document', 'location', 'contact', 'sticker'])
 def default_command(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
-        bot.send_message(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
+        bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
 
 # Handle AI command
 @bot.message_handler(content_types=["text"], commands=['ai', 'bing'])
