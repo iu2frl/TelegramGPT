@@ -1,3 +1,2 @@
 telebot
 asyncio
-threading
