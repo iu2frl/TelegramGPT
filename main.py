@@ -119,7 +119,7 @@ def send_welcome(inputMessage: telebot.types.Message):
 # Give project informations
 @bot.message_handler(content_types=["text"], commands=['info'])
 def send_welcome(inputMessage: telebot.types.Message):
-    bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nThis project is hosted on a GitHub repository, do you want to partecipate? Here's the link: https://github.com/iu2frl/YotaBot")
+    bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nThis project is hosted on a GitHub repository, do you want to partecipate? Here's the link: https://github.com/iu2frl/TelegramGPT")
 
 # @bot.message_handler(func=lambda msg: True)
 # def echo_all(message: telebot.types.Message):
