@@ -53,7 +53,7 @@ def default_command(inputMessage: telebot.types.Message):
         bot.send_message(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
 
 # Handle AI command
-@bot.message_handler(commands=['ai'])
+@bot.message_handler(content_types=["text"], commands=['ai', 'bing'])
 def HandleAiMessage(inputMessage: telebot.types.Message):
     if CheckWhitelist(inputMessage):
         # Check that the massage contains some text
