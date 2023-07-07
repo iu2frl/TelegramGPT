@@ -10,12 +10,17 @@ import re
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 bot = telebot.TeleBot(BOT_TOKEN)
 
+# Handle non-text messages
+@bot.message_handler(func=lambda message: True, content_types=['audio', 'photo', 'voice', 'video', 'document', 'location', 'contact', 'sticker'])
+def default_command(inputMessage: telebot.types.Message):
+    bot.send_message(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
+
 # Handle AI command
-@bot.message_handler(commands=['ai', 'bing'])
+@bot.message_handler(content_types=["text"], commands=['ai', 'bing'])
 def HandleAiMessage(inputMessage: telebot.types.Message):
     # Check that the massage contains some text
     if (len(inputMessage) <= 5):
-        bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + " please give me some data to process, syntax is: `/ai [text to interact with]`")
+        bot.reply_to(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nplease give me some data to process, syntax is: `/ai [text to interact with]`")
         return
     # Create async thread to handle replies
     thread = threading.Thread(target=ReplyAi, args=(inputMessage, ))
@@ -51,13 +56,19 @@ def ReplyAi(inputMessage: telebot.types.Message):
     except:
         bot.edit_message_text(gptResponse, inputMessage.chat.id, newReply.id)
 
-@bot.message_handler(commands=['start', 'hello'])
-def send_welcome(message):
-    bot.reply_to(message, "Howdy, how are you doing?")
+# Welcome new users
+@bot.message_handler(content_types=["text"], commands=['start', 'hello'])
+def send_welcome(inputMessage: telebot.types.Message):
+    bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nHow can i assist you today?")
 
-@bot.message_handler(func=lambda msg: True)
-def echo_all(message: telebot.types.Message):
-    bot.reply_to(message, message.text)
+# Give project informations
+@bot.message_handler(content_types=["text"], commands=['info'])
+def send_welcome(inputMessage: telebot.types.Message):
+    bot.reply_to(inputMessage, "Hello " + inputMessage.from_user.first_name + "\nThis project is hosted on a GitHub repository, do you want to partecipate? Here's the link: https://github.com/iu2frl/YotaBot")
+
+# @bot.message_handler(func=lambda msg: True)
+# def echo_all(message: telebot.types.Message):
+#     bot.reply_to(message, message.text)
 
 if __name__ == "__main__":
     print("Starting bot")
