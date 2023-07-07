@@ -23,13 +23,15 @@ if (":" not in BOT_TOKEN):
 # Generate bot object
 bot = telebot.TeleBot(BOT_TOKEN)
 
+BOT_WHITELIST: list[int] = []
 # Read allowed chat from environment variables
 if (not os.environ.get('BOT_WHITELIST')):
     logging.warning("No whitelist have been specified, this means that anybody can use this bot and you may get banned!")
-    BOT_WHITELIST: list[int] = []
 else:
-    BOT_WHITELIST: list[int] = os.environ.get('BOT_WHITELIST').strip().split(",")
-    if (BOT_WHITELIST is not list[int]):
+    try:
+        for element in os.environ.get('BOT_WHITELIST').strip().split(","):
+            BOT_WHITELIST.append(int(element.strip()))
+    except:
         logging.critical("Invalid whitelist format! Syntax: 12345,09876,...")
         raise Exception("Invalid BOT_WHITELIST")
 
@@ -43,7 +45,7 @@ def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
         logging.debug("Chat is in whitelist, accepting")
         return True
     else:
-        logging.debug("Ignoring message from user: [" + inputMessage.from_user.username + "]")
+        logging.warning("Ignoring message from user: [" + inputMessage.from_user.username + "] id: [" + str(inputMessage.chat.id) + "]")
         return False
 
 # Handle non-text messages
@@ -78,7 +80,7 @@ def ReplyAi(inputMessage: telebot.types.Message):
     # Generate temporary reply
     newReply = bot.reply_to(inputMessage, "Please wait...")
     # Process the input query
-    inputQuery = inputMessage.text.replace("/ai", "").strip()
+    inputQuery = inputMessage.text.replace("/ai", "").replace("/bing", "").strip()
     # Create the GPT4FREE instance
     try:
         gptResponse: str = g4f.ChatCompletion.create(model=g4f.Model.gpt_4, messages=[{"role": "user", "content": inputQuery}])
