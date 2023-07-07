@@ -7,8 +7,29 @@ import threading
 import re
 
 # Read API Token from environment variables
-BOT_TOKEN = os.environ.get('BOT_TOKEN')
+BOT_TOKEN: str = os.environ.get('BOT_TOKEN')
+if (len(BOT_TOKEN) < 10):
+    raise Exception("Input token is too short!")
+if (":" not in BOT_TOKEN):
+    raise Exception("Invalid input token format")
 bot = telebot.TeleBot(BOT_TOKEN)
+
+# Read allowed chat from environment variables
+BOT_WHITELIST: list[int] = os.environ.get('BOT_WHITELIST').strip().split(",")
+if (len(BOT_WHITELIST) == 0):
+    print("WARNING: No whitelist have been specified, this means that anybody can use this bot and you may get banned!")
+if (BOT_WHITELIST is not list[int]):
+    raise Exception("WARNING: Invalid whitelist format! Syntax: 12345,09876,...")
+bot = telebot.TeleBot(BOT_WHITELIST)
+
+# Check if message comes from a valid source
+def CheckWhitelist(inputMessage: telebot.types.Message) -> bool:
+    if (len(BOT_WHITELIST) == 0)
+
+# Handle non-text messages
+@bot.message_handler(func=lambda message: True, content_types=['audio', 'photo', 'voice', 'video', 'document', 'location', 'contact', 'sticker'])
+def default_command(inputMessage: telebot.types.Message):
+    bot.send_message(inputMessage, "Hi " + inputMessage.from_user.first_name + ",\nI'm very sorry but i have no idea on how to interact with this object")
 
 # Handle AI command
 @bot.message_handler(commands=['ai'])
